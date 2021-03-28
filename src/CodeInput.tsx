@@ -15,7 +15,8 @@ export const CodeInput: React.FC<CodeInputProps> = ({
 			<TextField
 				fullWidth
 				label="List Code"
-				onChange={(event) => setValue(event.target.value)}
+				onChange={event => setValue(event.target.value)}
+				onKeyPress={event => event.key === 'Enter' ? onSetCode((event.target as HTMLTextAreaElement).value) : null}
 				size="small"
 				style={{ marginRight: "8px" }}
 				value={value}

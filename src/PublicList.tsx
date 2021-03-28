@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { Box, Container, Paper } from "@material-ui/core";
 import { CodeInput } from "./CodeInput";
+import { CustomList } from "./CustomList";
 
 const PublicList: React.FC<Record<string, never>> = (): JSX.Element => {
 	const [code, setCode] = useState<string>("");
@@ -16,7 +17,11 @@ const PublicList: React.FC<Record<string, never>> = (): JSX.Element => {
 			<Container maxWidth="xs">
 				<Paper>
 					<Box p={4}>
-						{code ? code : <CodeInput onSetCode={(code) => setCode(code)} />}
+						{code ? (
+							<CustomList code={code} />
+						) : (
+							<CodeInput onSetCode={(code) => setCode(code)} />
+						)}
 					</Box>
 				</Paper>
 			</Container>
