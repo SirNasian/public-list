@@ -1,6 +1,11 @@
+const path = require("path");
+
 module.exports = {
 	entry: {
 		"public-list": "./src/PublicList.tsx",
+	},
+	output: {
+		path: path.resolve(__dirname, "public/js/"),
 	},
 	module: {
 		rules: [
