@@ -54,18 +54,19 @@ dbClient
 // Express Server/API
 const express = require("express");
 const app = express();
-const port = argv.port ? argv.port : 3000;
+const port = argv["server-port"] ? argv["server-port"] : 3000;
 
 app.use("/", express.static("./public/"));
 app.use(express.json());
+app.use(require("cors")());
 
 function ensureProp(value, name, res) {
 	if (value === undefined)
-		res.status(422).send(`Missing required property \`${name}\``);
+		res.status(400).send(`Missing required property \`${name}\``);
 	return value !== undefined;
 }
 
-app.put("/items/create", (req, res) => {
+app.post("/items/create", (req, res) => {
 	dbClient
 		.query(
 			'CREATE TABLE "items" (' +
@@ -75,17 +76,17 @@ app.put("/items/create", (req, res) => {
 				'PRIMARY KEY ("id"))'
 		)
 		.then(() => res.status(200).send("Successfully initialised `items`"))
-		.catch((err) => res.send(err.message));
+		.catch((err) => res.status(500).send(err.message));
 });
 
-app.put("/items/drop", (req, res) => {
+app.post("/items/drop", (req, res) => {
 	dbClient
 		.query('DROP TABLE "items"')
 		.then(() => res.status(200).send("Successfully destroyed `items`"))
-		.catch((err) => res.send(err.message));
+		.catch((err) => res.status(500).send(err.message));
 });
 
-app.put("/items", (req, res) => {
+app.post("/items", (req, res) => {
 	if (
 		ensureProp(req.body.id, "id", res) &&
 		ensureProp(req.body.value, "value", res) &&
@@ -97,7 +98,7 @@ app.put("/items", (req, res) => {
 				[req.body.id, req.body.value, req.body.done]
 			)
 			.then(() => res.status(200).send("Successfully updated item"))
-			.catch((err) => res.send(err.message));
+			.catch((err) => res.status(500).send(err.message));
 	}
 });
 
@@ -105,7 +106,7 @@ app.get("/items", (req, res) => {
 	dbClient
 		.query('SELECT * FROM "items"')
 		.then((dbRes) => res.status(200).send(dbRes.rows))
-		.catch((err) => res.send(err.message));
+		.catch((err) => res.status(400).send(err.message));
 });
 
 app.listen(port, () => {
