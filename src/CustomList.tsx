@@ -21,6 +21,13 @@ export const CustomList: React.FC<CustomListProps> = ({
 	const [newItemValue, setNewItemValue] = React.useState<string>("");
 	const [items, setItems] = React.useState<CustomListItem[]>([]);
 
+	React.useEffect(() => {
+		window.fetch('http://localhost:3000/items')
+			.then((res) => res.json())
+			.then((json) => setItems(json))
+			.catch((err) => console.log(err));
+	}, []);
+
 	const handleToggleDone = (id: string): void => {
 		setItems(
 			items.map((item) => {
