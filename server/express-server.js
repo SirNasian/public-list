@@ -71,6 +71,7 @@ app.post("/items/create", (req, res) => {
 		.query(
 			'CREATE TABLE "items" (' +
 				'"id"    CHAR(36),' +
+				'"code"  VARCHAR(80),' +
 				'"value" VARCHAR(80),' +
 				'"done"  BOOLEAN,' +
 				'PRIMARY KEY ("id"))'
@@ -89,13 +90,14 @@ app.post("/items/drop", (req, res) => {
 app.post("/items", (req, res) => {
 	if (
 		ensureProp(req.body.id, "id", res) &&
+		ensureProp(req.body.code, "code", res) &&
 		ensureProp(req.body.value, "value", res) &&
 		ensureProp(req.body.done, "done", res)
 	) {
 		dbClient
 			.query(
-				'INSERT INTO "items" VALUES ($1, $2, $3) ON CONFLICT ("id") DO UPDATE SET "value" = $2, "done" = $3',
-				[req.body.id, req.body.value, req.body.done]
+				'INSERT INTO "items" VALUES ($1, $2, $3, $4) ON CONFLICT ("id") DO UPDATE SET "value" = $3, "done" = $4',
+				[req.body.id, req.body.code, req.body.value, req.body.done]
 			)
 			.then(() => res.status(200).send("Successfully updated item"))
 			.catch((err) => res.status(500).send(err.message));

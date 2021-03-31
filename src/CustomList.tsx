@@ -1,4 +1,5 @@
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Box, Checkbox, TextField, Typography } from "@material-ui/core";
 
 export default CustomList;
@@ -9,6 +10,7 @@ type CustomListProps = {
 
 type CustomListItem = {
 	id: string;
+	code: string;
 	value: string;
 	done: boolean;
 };
@@ -49,7 +51,8 @@ export const CustomList: React.FC<CustomListProps> = ({
 			setItems([
 				...items,
 				{
-					id: value,
+					id: uuidv4(),
+					code: code,
 					value: value,
 					done: false,
 				},
