@@ -22,7 +22,7 @@ export const CustomList: React.FC<CustomListProps> = ({
 	const [items, setItems] = React.useState<CustomListItem[]>([]);
 
 	React.useEffect(() => {
-		window.fetch('http://localhost:3000/items')
+		window.fetch(`http://localhost:3000/items/${code}`)
 			.then((res) => res.json())
 			.then((json) => setItems(json))
 			.catch((err) => console.log(err));

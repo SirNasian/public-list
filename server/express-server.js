@@ -104,9 +104,9 @@ app.post("/items", (req, res) => {
 	}
 });
 
-app.get("/items", (req, res) => {
+app.get("/items/:code", (req, res) => {
 	dbClient
-		.query('SELECT * FROM "items"')
+		.query('SELECT * FROM "items" WHERE "code" = $1', [req.params.code])
 		.then((dbRes) => res.status(200).send(dbRes.rows))
 		.catch((err) => res.status(400).send(err.message));
 });
