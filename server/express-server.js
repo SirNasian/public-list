@@ -66,7 +66,7 @@ function ensureProp(value, name, res) {
 	return value !== undefined;
 }
 
-app.post("/items/create", (req, res) => {
+app.post("/items/init", (req, res) => {
 	dbClient
 		.query(
 			'CREATE TABLE "items" (' +
@@ -87,7 +87,7 @@ app.post("/items/drop", (req, res) => {
 		.catch((err) => res.status(500).send(err.message));
 });
 
-app.post("/items", (req, res) => {
+app.post("/items/update", (req, res) => {
 	if (
 		ensureProp(req.body.id, "id", res) &&
 		ensureProp(req.body.code, "code", res) &&
@@ -102,6 +102,14 @@ app.post("/items", (req, res) => {
 			.then(() => res.status(200).send("Successfully updated item"))
 			.catch((err) => res.status(500).send(err.message));
 	}
+});
+
+app.post("/items/remove", (req, res) => {
+	if (ensureProp(req.body.id, "id", res))
+		dbClient
+			.query('DELETE FROM "items" WHERE "id" = $1', [req.body.id])
+			.then(() => res.status(200).send("Successfully deleted item"))
+			.catch((err) => res.status(500).send(err.message));
 });
 
 app.get("/items/:code", (req, res) => {

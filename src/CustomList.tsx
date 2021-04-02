@@ -17,9 +17,19 @@ type CustomListItem = {
 
 function updateItem(item: CustomListItem) {
 	window
-		.fetch(`http://localhost:3000/items`, {
+		.fetch(`http://localhost:3000/items/update`, {
 			method: "post",
 			body: JSON.stringify(item),
+			headers: { "Content-Type": "application/json" },
+		})
+		.catch((err) => console.log(err));
+}
+
+function removeItem(id: string) {
+	window
+		.fetch(`http://localhost:3000/items/remove`, {
+			method: "post",
+			body: JSON.stringify({ id: id }),
 			headers: { "Content-Type": "application/json" },
 		})
 		.catch((err) => console.log(err));
@@ -60,8 +70,12 @@ export const CustomList: React.FC<CustomListProps> = ({
 	};
 
 	const handleItemBlur = (id: string, value: string): void => {
-		if (!value) setItems(items.filter((item) => item.id !== id));
-		else updateItem(items.find((item) => item.id === id));
+		if (value) {
+			updateItem(items.find((item) => item.id === id));
+		} else {
+			setItems(items.filter((item) => item.id !== id));
+			removeItem(id);
+		}
 	};
 
 	const handleNewItem = (value: string): void => {
