@@ -18,7 +18,7 @@ const PublicList: React.FC<Record<string, never>> = (): JSX.Element => {
 				<Paper>
 					<Box p={4}>
 						{code ? (
-							<CustomList code={code} />
+							<CustomList code={code} onBack={() => setCode("")} />
 						) : (
 							<CodeInput onSetCode={(code) => setCode(code)} />
 						)}

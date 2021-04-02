@@ -1,17 +1,22 @@
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
+
 import {
 	Box,
 	Checkbox,
 	CircularProgress,
+	IconButton,
 	TextField,
 	Typography,
 } from "@material-ui/core";
+
+import { ChevronLeft } from "@material-ui/icons";
 
 export default CustomList;
 
 type CustomListProps = {
 	code: string;
+	onBack: () => void;
 };
 
 type CustomListItem = {
@@ -43,6 +48,7 @@ function removeItem(id: string) {
 
 export const CustomList: React.FC<CustomListProps> = ({
 	code,
+	onBack,
 }: CustomListProps): JSX.Element => {
 	const [newItemValue, setNewItemValue] = React.useState<string>("");
 	const [items, setItems] = React.useState<CustomListItem[]>([]);
@@ -100,6 +106,11 @@ export const CustomList: React.FC<CustomListProps> = ({
 
 	return (
 		<>
+			<Box position="relative" left="-0.6rem" height="0px">
+				<IconButton onClick={onBack}>
+					<ChevronLeft />
+				</IconButton>
+			</Box>
 			<Box marginBottom={2} textAlign="center">
 				<Typography variant="h4">{code}</Typography>
 			</Box>
