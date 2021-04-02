@@ -1,6 +1,12 @@
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Box, Checkbox, TextField, Typography } from "@material-ui/core";
+import {
+	Box,
+	Checkbox,
+	CircularProgress,
+	TextField,
+	Typography,
+} from "@material-ui/core";
 
 export default CustomList;
 
@@ -97,39 +103,49 @@ export const CustomList: React.FC<CustomListProps> = ({
 			<Box marginBottom={2} textAlign="center">
 				<Typography variant="h4">{code}</Typography>
 			</Box>
-			{items.map((item: CustomListItem) => (
-				<Box key={item.id} display="flex">
+			{items.length > 0 ? (
+				<>
+					{items.map((item: CustomListItem) => (
+						<Box key={item.id} display="flex">
+							<TextField
+								fullWidth
+								InputProps={{
+									endAdornment: (
+										<Checkbox
+											checked={item.done}
+											color="primary"
+											onChange={() => handleToggleDone(item.id)}
+										/>
+									),
+								}}
+								onBlur={(event) => handleItemBlur(item.id, event.target.value)}
+								onChange={(event) =>
+									handleValueChange(item.id, event.target.value)
+								}
+								onKeyPress={(event) =>
+									event.key === "Enter"
+										? (event.target as HTMLElement).blur()
+										: null
+								}
+								value={item.value}
+							/>
+						</Box>
+					))}
 					<TextField
 						fullWidth
-						InputProps={{
-							endAdornment: (
-								<Checkbox
-									checked={item.done}
-									color="primary"
-									onChange={() => handleToggleDone(item.id)}
-								/>
-							),
-						}}
-						onBlur={(event) => handleItemBlur(item.id, event.target.value)}
-						onChange={(event) => handleValueChange(item.id, event.target.value)}
+						onBlur={(event) => handleNewItem(event.target.value)}
+						onChange={(event) => setNewItemValue(event.target.value)}
 						onKeyPress={(event) =>
-							event.key === "Enter"
-								? (event.target as HTMLElement).blur()
-								: null
+							event.key === "Enter" ? handleNewItem(newItemValue) : null
 						}
-						value={item.value}
+						value={newItemValue}
 					/>
+				</>
+			) : (
+				<Box textAlign="center">
+					<CircularProgress />
 				</Box>
-			))}
-			<TextField
-				fullWidth
-				onBlur={(event) => handleNewItem(event.target.value)}
-				onChange={(event) => setNewItemValue(event.target.value)}
-				onKeyPress={(event) =>
-					event.key === "Enter" ? handleNewItem(newItemValue) : null
-				}
-				value={newItemValue}
-			/>
+			)}
 		</>
 	);
 };
