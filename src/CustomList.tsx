@@ -144,6 +144,7 @@ export const CustomList: React.FC<CustomListProps> = ({
 					))}
 					<TextField
 						fullWidth
+						InputProps={{ endAdornment: <Box height="42px" /> }}
 						onBlur={(event) => handleNewItem(event.target.value)}
 						onChange={(event) => setNewItemValue(event.target.value)}
 						onKeyPress={(event) =>
