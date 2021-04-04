@@ -24,6 +24,7 @@ type CustomListItem = {
 	code: string;
 	value: string;
 	done: boolean;
+	order: number;
 	editing: boolean;
 };
 
@@ -64,7 +65,7 @@ export const CustomList: React.FC<CustomListProps> = ({
 						const match = items
 							? items.find((item: CustomListItem) => item.id === newItem.id)
 							: undefined;
-						return (match && match.editing) ? match : newItem;
+						return match && match.editing ? match : newItem;
 					})
 				)
 				.then((items) => setItems(items))
@@ -113,6 +114,11 @@ export const CustomList: React.FC<CustomListProps> = ({
 				code: code,
 				value: value,
 				done: false,
+				order: items.reduce(
+					(order: number, item: CustomListItem) =>
+						Math.max(order, item.order + 1),
+					0
+				),
 				editing: false,
 			};
 			setItems([...items, newItem]);

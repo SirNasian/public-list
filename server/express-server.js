@@ -74,6 +74,7 @@ app.post("/items/init", (req, res) => {
 				'"code"  VARCHAR(80),' +
 				'"value" VARCHAR(80),' +
 				'"done"  BOOLEAN,' +
+				'"order" INTEGER,' +
 				'PRIMARY KEY ("id"))'
 		)
 		.then(() => res.status(200).send("Successfully initialised `items`"))
@@ -92,12 +93,19 @@ app.post("/items/update", (req, res) => {
 		ensureProp(req.body.id, "id", res) &&
 		ensureProp(req.body.code, "code", res) &&
 		ensureProp(req.body.value, "value", res) &&
-		ensureProp(req.body.done, "done", res)
+		ensureProp(req.body.done, "done", res) &&
+		ensureProp(req.body.value, "order", res)
 	) {
 		dbClient
 			.query(
-				'INSERT INTO "items" VALUES ($1, $2, $3, $4) ON CONFLICT ("id") DO UPDATE SET "value" = $3, "done" = $4',
-				[req.body.id, req.body.code, req.body.value, req.body.done]
+				'INSERT INTO "items" VALUES ($1, $2, $3, $4, $5) ON CONFLICT ("id") DO UPDATE SET "value" = $3, "done" = $4, "order" = $5',
+				[
+					req.body.id,
+					req.body.code,
+					req.body.value,
+					req.body.done,
+					req.body.order,
+				]
 			)
 			.then(() => res.status(200).send("Successfully updated item"))
 			.catch((err) => res.status(500).send(err.message));
@@ -114,7 +122,9 @@ app.post("/items/remove", (req, res) => {
 
 app.get("/items/:code", (req, res) => {
 	dbClient
-		.query('SELECT * FROM "items" WHERE "code" = $1', [req.params.code])
+		.query('SELECT * FROM "items" WHERE "code" = $1 ORDER BY "order"', [
+			req.params.code,
+		])
 		.then((dbRes) => res.status(200).send(dbRes.rows))
 		.catch((err) => res.status(400).send(err.message));
 });
