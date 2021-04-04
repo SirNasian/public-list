@@ -28,7 +28,7 @@ type CustomListItem = {
 
 function updateItem(item: CustomListItem) {
 	window
-		.fetch(`http://localhost:3000/items/update`, {
+		.fetch(`/items/update`, {
 			method: "post",
 			body: JSON.stringify(item),
 			headers: { "Content-Type": "application/json" },
@@ -38,7 +38,7 @@ function updateItem(item: CustomListItem) {
 
 function removeItem(id: string) {
 	window
-		.fetch(`http://localhost:3000/items/remove`, {
+		.fetch(`/items/remove`, {
 			method: "post",
 			body: JSON.stringify({ id: id }),
 			headers: { "Content-Type": "application/json" },
@@ -51,11 +51,11 @@ export const CustomList: React.FC<CustomListProps> = ({
 	onBack,
 }: CustomListProps): JSX.Element => {
 	const [newItemValue, setNewItemValue] = React.useState<string>("");
-	const [items, setItems] = React.useState<CustomListItem[]>([]);
+	const [items, setItems] = React.useState<CustomListItem[]>(undefined);
 
 	React.useEffect(() => {
 		window
-			.fetch(`http://localhost:3000/items/${code}`)
+			.fetch(`/items/${code}`)
 			.then((res) => res.json())
 			.then((json) => setItems(json))
 			.catch((err) => console.log(err));
@@ -114,7 +114,7 @@ export const CustomList: React.FC<CustomListProps> = ({
 			<Box marginBottom={2} textAlign="center">
 				<Typography variant="h4">{code}</Typography>
 			</Box>
-			{items.length > 0 ? (
+			{items ? (
 				<>
 					{items.map((item: CustomListItem) => (
 						<Box key={item.id} display="flex">
