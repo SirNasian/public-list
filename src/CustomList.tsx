@@ -24,6 +24,7 @@ type CustomListItem = {
 	code: string;
 	value: string;
 	done: boolean;
+	editing: boolean;
 };
 
 function updateItem(item: CustomListItem) {
@@ -54,12 +55,23 @@ export const CustomList: React.FC<CustomListProps> = ({
 	const [items, setItems] = React.useState<CustomListItem[]>(undefined);
 
 	React.useEffect(() => {
-		window
-			.fetch(`/items/${code}`)
-			.then((res) => res.json())
-			.then((json) => setItems(json))
-			.catch((err) => console.log(err));
-	}, []);
+		const interval = setInterval(() => {
+			window
+				.fetch(`/items/${code}`)
+				.then((res) => res.json())
+				.then((json) =>
+					json.map((newItem: CustomListItem) => {
+						const match = items
+							? items.find((item: CustomListItem) => item.id === newItem.id)
+							: undefined;
+						return (match && match.editing) ? match : newItem;
+					})
+				)
+				.then((items) => setItems(items))
+				.catch((err) => console.log(err));
+		}, 1000);
+		return () => clearInterval(interval);
+	}, [items]);
 
 	const handleToggleDone = (id: string): void => {
 		const newItems = items.map((item) => {
@@ -75,7 +87,10 @@ export const CustomList: React.FC<CustomListProps> = ({
 		setItems(
 			items.map((item) => {
 				const newItem = { ...item };
-				if (newItem.id === id) newItem.value = value;
+				if (newItem.id === id) {
+					newItem.value = value;
+					newItem.editing = true;
+				}
 				return newItem;
 			})
 		);
@@ -84,6 +99,7 @@ export const CustomList: React.FC<CustomListProps> = ({
 	const handleItemBlur = (id: string, value: string): void => {
 		if (value) {
 			updateItem(items.find((item) => item.id === id));
+			setItems(items.map((item) => ({ ...item, editing: false })));
 		} else {
 			setItems(items.filter((item) => item.id !== id));
 			removeItem(id);
@@ -97,6 +113,7 @@ export const CustomList: React.FC<CustomListProps> = ({
 				code: code,
 				value: value,
 				done: false,
+				editing: false,
 			};
 			setItems([...items, newItem]);
 			setNewItemValue("");
