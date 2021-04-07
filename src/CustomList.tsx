@@ -6,11 +6,17 @@ import {
 	Checkbox,
 	CircularProgress,
 	IconButton,
+	Snackbar,
 	TextField,
 	Typography,
 } from "@material-ui/core";
 
-import { ChevronLeft } from "@material-ui/icons";
+import {
+	ChevronLeft as ChevronLeftIcon,
+	Link as LinkIcon,
+} from "@material-ui/icons";
+
+import { Alert } from "@material-ui/lab";
 
 export default CustomList;
 
@@ -54,6 +60,7 @@ export const CustomList: React.FC<CustomListProps> = ({
 }: CustomListProps): JSX.Element => {
 	const [newItemValue, setNewItemValue] = React.useState<string>("");
 	const [items, setItems] = React.useState<CustomListItem[]>(undefined);
+	const [linkInfoOpen, setLinkInfoOpen] = React.useState<boolean>(false);
 
 	React.useEffect(() => {
 		const interval = setInterval(() => {
@@ -127,15 +134,33 @@ export const CustomList: React.FC<CustomListProps> = ({
 		}
 	};
 
+	const handleLinkClick = () => {
+		navigator.clipboard.writeText(`${document.domain}/list/${code}`);
+		setLinkInfoOpen(true);
+	};
+
 	return (
 		<>
-			<Box position="relative" left="-0.6rem" height="0px">
+			<Snackbar
+				autoHideDuration={5000}
+				onClose={() => setLinkInfoOpen(false)}
+				open={linkInfoOpen}
+			>
+				<Alert severity="info">Link Copied!</Alert>
+			</Snackbar>
+			<Box
+				display="flex"
+				justifyContent="space-between"
+				marginBottom={2}
+				textAlign="center"
+			>
 				<IconButton onClick={onBack}>
-					<ChevronLeft />
+					<ChevronLeftIcon />
 				</IconButton>
-			</Box>
-			<Box marginBottom={2} textAlign="center">
 				<Typography variant="h4">{code}</Typography>
+				<IconButton onClick={handleLinkClick}>
+					<LinkIcon />
+				</IconButton>
 			</Box>
 			{items ? (
 				<>
