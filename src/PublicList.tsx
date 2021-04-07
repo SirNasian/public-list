@@ -4,8 +4,10 @@ import { Box, Container, Paper } from "@material-ui/core";
 import { CodeInput } from "./CodeInput";
 import { CustomList } from "./CustomList";
 
+const defaultCode = document.getElementById("public-list").getAttribute("code");
+
 const PublicList: React.FC<Record<string, never>> = (): JSX.Element => {
-	const [code, setCode] = useState<string>("");
+	const [code, setCode] = useState<string>(defaultCode);
 	return (
 		<Box
 			alignItems="center"
